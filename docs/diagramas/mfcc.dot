@@ -1,0 +1,5 @@
+digraph G { graph [fontname="DejaVu Sans", fontsize=11, bgcolor="white", pad=0.2, nodesep=0.35, ranksep=0.45]; node [fontname="DejaVu Sans", fontsize=10, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#4A5D7A", penwidth=1.2]; edge [fontname="DejaVu Sans", fontsize=9, color="#4A5D7A"]; rankdir=LR; node [width=1.3];
+  a [label="archivo .wav"]; b [label="load\n(soundfile +\nsoxr a 22050 Hz)"]; c [label="stft\nventanas de 2048,\nsalto 512, Hann,\nscipy.fft.rfft"];
+  d [label="|X|²\nespectrograma\nde potencia\n(1025 × T)"]; e [label="banco mel\nfilters.mel\n(128 × 1025)\nnp.einsum"]; f [label="power_to_db\n10·log10"]; g [label="DCT tipo II\nscipy.fft.dct\n(se quedan n_mfcc)"]; h [label="MFCC\n(n_mfcc × T)", fillcolor="#DCE8F5"];
+  a->b [label="y: float32\n(N,)"]; b->c; c->d [label="complex64"]; d->e; e->f [label="(128 × T)"]; f->g; g->h;
+}

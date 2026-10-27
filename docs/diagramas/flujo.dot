@@ -1,0 +1,7 @@
+digraph G { graph [fontname="DejaVu Sans", fontsize=11, bgcolor="white", pad=0.2, nodesep=0.35, ranksep=0.45]; node [fontname="DejaVu Sans", fontsize=10, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#4A5D7A", penwidth=1.2]; edge [fontname="DejaVu Sans", fontsize=9, color="#4A5D7A"]; rankdir=TB;
+  ini [label="Inicio\nconfigurar logging", shape=oval]; mic [label="¿Hay micrófono?", shape=diamond, style=filled, fillcolor="#FFFFFF"]; fin0 [label="Mensaje de error\ny salir", shape=oval];
+  pre [label="precalentar()\ncompila numba"]; menu [label="Menú principal"]; cfg [label="Elegir pack,\ncantidad y nombres"]; ronda [label="Por cada clip (ronda)\nanalizar original (caché)"];
+  turno [label="Por cada jugador:\nreproducir → cuenta regresiva\n→ grabar → analizar → comparar"]; vacia [label="¿Grabación vacía?", shape=diamond, style=filled, fillcolor="#FFFFFF"]; pts [label="Mostrar barras y\nsumar puntos"];
+  mas [label="¿Quedan rondas?", shape=diamond, style=filled, fillcolor="#FFFFFF"]; save [label="ranking.registrar_partida\n(escritura atómica)"]; res [label="Resultado final"];
+  ini->mic; mic->fin0 [label="no"]; mic->pre [label="sí"]; pre->menu; menu->cfg [label="1. Jugar"]; cfg->ronda->turno->vacia; vacia->turno [label="sí (1 reintento)"]; vacia->pts [label="no"]; pts->mas; mas->ronda [label="sí"]; mas->save [label="no"]; save->res->menu;
+}

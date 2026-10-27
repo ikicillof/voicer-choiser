@@ -1,0 +1,10 @@
+# Entorno virtual y archivos generados
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+
+# Datos que genera el juego al usarse
+datos/
+grabaciones/

@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "voicer-choicer"
+version = "1.0.0"
+description = "Juego de imitación de voz en consola hecho con librosa"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "librosa==1.0.0",
+    "sounddevice==0.5.5",
+    "soundfile==0.14.0",
+]
+
+[project.scripts]
+voicer-choicer = "voicer_choicer.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.black]
+line-length = 88

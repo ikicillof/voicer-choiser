@@ -1,0 +1,6 @@
+digraph G { graph [fontname="DejaVu Sans", fontsize=11, bgcolor="white", pad=0.2, nodesep=0.35, ranksep=0.45]; node [fontname="DejaVu Sans", fontsize=10, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#4A5D7A", penwidth=1.2]; edge [fontname="DejaVu Sans", fontsize=9, color="#4A5D7A"]; rankdir=TB; node [width=1.6];
+  w [label="clip .wav\n(disco)", shape=folder, fillcolor="#FFFFFF"]; m [label="micrófono"]; y1 [label="ndarray float32\n(N,)"]; y2 [label="ndarray float32\n(M,)"];
+  a1 [label="Analisis\nmfcc (13×T)\ntono list"]; a2 [label="Analisis\nmfcc (13×T')\ntono list"]; dtw [label="dtw\nD (T×T')\ncamino list[(i,j)]"]; r [label="Resultado\ntimbre, tono, total", fillcolor="#E3F1E3"];
+  p [label="Partida.puntos\ndict[str, list[int]]"]; j [label="ranking.json\nlist[dict]", shape=folder, fillcolor="#FFFFFF"];
+  w->y1 [label="librosa.load"]; m->y2 [label="sd.rec"]; y1->a1 [label="analizar"]; y2->a2 [label="analizar"]; a1->dtw; a2->dtw; dtw->r [label="exp / error medio"]; r->p [label=".total"]; p->j [label="json.dump"];
+}

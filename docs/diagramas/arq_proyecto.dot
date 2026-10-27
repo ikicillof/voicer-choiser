@@ -1,0 +1,13 @@
+digraph G { graph [fontname="DejaVu Sans", fontsize=11, bgcolor="white", pad=0.2, nodesep=0.35, ranksep=0.45]; node [fontname="DejaVu Sans", fontsize=10, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#4A5D7A", penwidth=1.2]; edge [fontname="DejaVu Sans", fontsize=9, color="#4A5D7A"]; rankdir=TB;
+  main [label="main.py\nmenú, logging, manejo de errores", fillcolor="#DCE8F5"];
+  juego [label="juego.py\nclase Partida (rondas y turnos)"];
+  interfaz [label="interfaz.py\nentrada/salida de consola"];
+  puntaje [label="puntaje.py\nanálisis y comparación", fillcolor="#E3F1E3", color="#4F7A52"];
+  audio [label="audio.py\nmicrófono y parlantes"]; packs [label="packs.py\nclips en carpetas"]; ranking [label="ranking.py\nranking en JSON"];
+  config [label="config.py\nconstantes", shape=note, fillcolor="#FFFFFF"]; errores [label="errores.py\nexcepciones", shape=note, fillcolor="#FFFFFF"];
+  librosa [label="librosa", fillcolor="#F6EFE2", color="#9A7B4F"]; sd [label="sounddevice\nsoundfile", fillcolor="#F6EFE2", color="#9A7B4F"]; fs [label="packs/*.wav\ndatos/ranking.json\ngrabaciones/", shape=folder, fillcolor="#FFFFFF"];
+  main -> juego; main -> interfaz; main -> packs; main -> ranking; main -> puntaje [label=" precalentar"]; main -> audio [label=" verificar"];
+  juego -> interfaz; juego -> puntaje; juego -> audio; juego -> packs; juego -> ranking;
+  puntaje -> librosa; audio -> sd; packs -> fs [style=dashed]; ranking -> fs [style=dashed]; audio -> fs [style=dashed];
+  {rank=same; config; errores}
+}

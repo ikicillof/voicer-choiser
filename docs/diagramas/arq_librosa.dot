@@ -1,0 +1,21 @@
+digraph G { graph [fontname="DejaVu Sans", fontsize=11, bgcolor="white", pad=0.2, nodesep=0.35, ranksep=0.45]; node [fontname="DejaVu Sans", fontsize=10, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#4A5D7A", penwidth=1.2]; edge [fontname="DejaVu Sans", fontsize=9, color="#4A5D7A"]; rankdir=TB;
+  subgraph cluster_l { label="librosa"; style="rounded,dashed"; color="#888888"; fontname="DejaVu Sans";
+    core [label="librosa.core\naudio.py · spectrum.py · pitch.py · convert.py\n(load, stft, pyin, autocorrelate)", fillcolor="#DCE8F5"];
+    feature [label="librosa.feature\nspectral.py\n(mfcc, melspectrogram, rms)"];
+    filters [label="librosa.filters\n(mel, chroma)"];
+    effects [label="librosa.effects\n(trim, split, time_stretch)"];
+    sequence [label="librosa.sequence\n(dtw, viterbi, transition_*)"];
+    util [label="librosa.util\n(frame, normalize, MAX_MEM_BLOCK)"];
+    cache [label="_cache.py\nCacheManager (joblib)"];
+    feature -> core; feature -> filters; effects -> feature; effects -> core;
+    core -> sequence [label=" pyin usa viterbi"]; core -> util; feature -> util; sequence -> util;
+    core -> cache [style=dashed]; filters -> cache [style=dashed];
+  }
+  numpy [label="NumPy\n(ndarray)", fillcolor="#F6EFE2", color="#9A7B4F"];
+  scipy [label="SciPy\n(scipy.fft, cdist, stats.beta)", fillcolor="#F6EFE2", color="#9A7B4F"];
+  numba [label="numba\n(@jit, @stencil, @guvectorize)", fillcolor="#F6EFE2", color="#9A7B4F"];
+  sf [label="soundfile\n(libsndfile)", fillcolor="#F6EFE2", color="#9A7B4F"];
+  soxr [label="soxr\n(remuestreo)", fillcolor="#F6EFE2", color="#9A7B4F"];
+  joblib [label="joblib\n(Memory)", fillcolor="#F6EFE2", color="#9A7B4F"];
+  util -> numpy; core -> scipy; sequence -> scipy; sequence -> numba; core -> numba; core -> sf; core -> soxr; cache -> joblib;
+}

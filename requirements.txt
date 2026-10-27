@@ -1,0 +1,4 @@
+# Dependencias directas del proyecto (librosa instala numpy, scipy, numba, etc.)
+librosa==1.0.0
+sounddevice==0.5.5
+soundfile==0.14.0

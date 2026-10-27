@@ -1,0 +1,9 @@
+digraph G { graph [fontname="DejaVu Sans", fontsize=11, bgcolor="white", pad=0.2, nodesep=0.35, ranksep=0.45]; node [fontname="DejaVu Sans", fontsize=10, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#4A5D7A", penwidth=1.2]; edge [fontname="DejaVu Sans", fontsize=9, color="#4A5D7A"]; rankdir=TB;
+  a [label="señal y (N,)"]; b [label="util.frame\nvista de cuadros sin copiar\n(2048 × T)"];
+  c [label="_cumulative_mean_normalized_difference\nautocorrelación por FFT → d(τ) → d'(τ)"];
+  d [label="interpolación parabólica\nde los mínimos"]; e [label="100 umbrales con prior Beta(2, 18)\n→ candidatos de período y probabilidades"];
+  f [label="observaciones del HMM\n2 × 601 estados (con/sin tono × bins de 0,1 semitono)"];
+  g [label="transición local (triangular) ⊗ cambio sonoro/sordo\nnp.kron"]; h [label="sequence.viterbi (numba)\ncamino de estados más probable"];
+  i [label="f0 por cuadro (Hz o NaN)\nvoiced_flag · voiced_prob", fillcolor="#DCE8F5"];
+  a->b->c->d->e->f->h->i; g->h;
+}

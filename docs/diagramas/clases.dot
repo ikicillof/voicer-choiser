@@ -1,0 +1,8 @@
+digraph G { graph [fontname="DejaVu Sans", fontsize=11, bgcolor="white", pad=0.2, nodesep=0.35, ranksep=0.45]; node [fontname="DejaVu Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#4A5D7A", penwidth=1.2]; edge [fontname="DejaVu Sans", fontsize=9, color="#4A5D7A"]; rankdir=TB; node [shape=record, style=filled, fillcolor="#EEF2F7"];
+  Partida [label="{Partida|jugadores: list[str]\lnombre_pack: str\lclips: list[Path]\lpuntos: dict[str, list[int]]\l_analisis_originales: dict[Path, Analisis]\l|jugar() → dict[str, int]\ltotales() → dict[str, int]\l_jugar_ronda(numero, clip)\l_turno(jugador, clip, original, segundos) → int\l_analisis_original(clip) → Analisis\l}"];
+  Analisis [label="{«dataclass» Analisis|mfcc: ndarray (13 × T)\ltono: list[float \| None]\lduracion: float\l}", fillcolor="#E3F1E3"];
+  Resultado [label="{«dataclass» Resultado|timbre: float\ltono: float \| None\ltotal: int\l}", fillcolor="#E3F1E3"];
+  Err [label="{ErrorJuego|}"]; E1 [label="{ErrorAudio|}"]; E2 [label="{GrabacionVaciaError|}"]; E3 [label="{PackInvalidoError|}"];
+  Partida -> Analisis [label=" guarda en caché  1..*", arrowhead=open, arrowtail=odiamond, dir=both]; Partida -> Resultado [label=" recibe de comparar()", style=dashed];
+  E1 -> Err [arrowhead=empty]; E2 -> Err [arrowhead=empty]; E3 -> Err [arrowhead=empty];
+}
