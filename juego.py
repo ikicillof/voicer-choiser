@@ -16,7 +16,12 @@ import logging
 from datetime import datetime
 from pathlib import Path
 
-from voicer_choicer import audio, config, interfaz, packs, puntaje, ranking
+import audio
+import config
+import interfaz
+import packs
+import puntaje
+import ranking
 
 log = logging.getLogger(__name__)
 

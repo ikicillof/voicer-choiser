@@ -7,9 +7,8 @@ repartidos por el código. Si hay que calibrar el puntaje, se toca este archivo.
 from pathlib import Path
 
 # --- Rutas -------------------------------------------------------------------
-# config.py está en src/voicer_choicer/, así que la raíz del proyecto
-# queda dos carpetas más arriba.
-RAIZ_PROYECTO = Path(__file__).resolve().parents[2]
+# config.py está en la raíz del proyecto, junto a main.py.
+RAIZ_PROYECTO = Path(__file__).resolve().parent
 CARPETA_PACKS = RAIZ_PROYECTO / "packs"
 CARPETA_DATOS = RAIZ_PROYECTO / "datos"
 CARPETA_GRABACIONES = RAIZ_PROYECTO / "grabaciones"

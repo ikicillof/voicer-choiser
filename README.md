@@ -46,23 +46,22 @@ Todos los comandos se escriben en **PowerShell** o en el **Símbolo del sistema*
 
    Con el entorno activado, la línea del prompt empieza con `(.venv)`.
 
-4. **Instalar las dependencias y el proyecto:**
+4. **Instalar las dependencias:**
 
    ```
    python -m pip install --upgrade pip
    pip install -r requirements.txt
-   pip install -e .
    ```
 
-   `pip install -e .` instala el paquete `voicer_choicer` en modo editable: los cambios en `src/` se ven sin reinstalar.
+   El proyecto no se instala: se ejecuta directamente desde esta carpeta.
 
 ## Ejecución
 
 ```
-python -m voicer_choicer
+python main.py
 ```
 
-También funciona el comando corto `voicer-choicer`. La primera vez el juego tarda unos segundos en "preparar el motor de audio". Es la compilación de numba que hace librosa por dentro; después queda guardada.
+La primera vez el juego tarda unos segundos en "preparar el motor de audio". Es la compilación de numba que hace librosa por dentro; después queda guardada.
 
 No hace falta configurar nada más. Las carpetas `datos/` (ranking y log) y `grabaciones/` se crean solas.
 
@@ -100,42 +99,33 @@ No hace falta configurar nada más. Las carpetas `datos/` (ranking y log) y `gra
 El pack `demo` trae silbidos y notas sintéticas para probar el juego sin grabar nada; se imitan silbando o tarareando. Para regenerarlo:
 
 ```
-python herramientas/generar_pack_demo.py
+python -m herramientas.generar_pack_demo
 ```
 
-**Agregar un pack propio:** crear una carpeta dentro de `packs/` y poner archivos `.wav` de unos 1 a 4 segundos. El nombre del archivo es el nombre que se muestra: `gato_enojado.wav` aparece como "Gato enojado".
+**Agregar un pack propio:** crear una carpeta dentro de `packs/` y poner archivos `.wav` mono y de 16 bits, de unos 1 a 4 segundos. El nombre del archivo es el nombre que se muestra: `gato_enojado.wav` aparece como "Gato enojado".
 
 ## Pruebas
 
 ```
-python -m unittest discover -s tests -v
+python -m unittest discover tests
 ```
 
-Las pruebas no usan micrófono: generan señales sintéticas con librosa y reemplazan el audio por *mocks*. Para revisar el estilo del código (opcional):
-
-```
-pip install ruff black
-ruff check src tests herramientas
-black --check src tests herramientas
-```
+Las pruebas no usan micrófono: generan señales sintéticas con librosa y reemplazan el audio por *mocks*. Hay que correrlas desde la carpeta del proyecto.
 
 ## Estructura
 
 ```
 voicer-choicer/
 ├── README.md
-├── pyproject.toml          # metadatos del paquete y configuración de ruff/black
 ├── requirements.txt        # dependencias directas con versión fija
-├── src/voicer_choicer/
-│   ├── main.py             # punto de entrada y menú
-│   ├── juego.py            # clase Partida: rondas y turnos
-│   ├── interfaz.py         # todo lo que se imprime o se pide por teclado
-│   ├── puntaje.py          # análisis y comparación con librosa
-│   ├── audio.py            # micrófono, parlantes y .wav
-│   ├── packs.py            # carpetas de clips
-│   ├── ranking.py          # ranking en JSON
-│   ├── config.py           # constantes ajustables
-│   └── errores.py          # excepciones propias
+├── main.py                 # punto de entrada y menú
+├── juego.py                # funciones de la partida: rondas y turnos
+├── interfaz.py             # todo lo que se imprime o se pide por teclado
+├── puntaje.py              # análisis y comparación con librosa
+├── audio.py                # micrófono, parlantes y .wav
+├── packs.py                # carpetas de clips
+├── ranking.py              # ranking en JSON
+├── config.py               # constantes ajustables
 ├── tests/                  # pruebas con unittest
 ├── packs/demo/             # clips de ejemplo
 ├── herramientas/           # script que genera el pack demo
@@ -151,15 +141,15 @@ voicer-choicer/
 | "No se encontró ningún micrófono conectado" | Conectar el micrófono antes de abrir el juego y revisar que Windows lo tenga como dispositivo de entrada predeterminado: Configuración → Sistema → Sonido. |
 | Siempre dice "No se escuchó nada" | Windows puede estar bloqueando el micrófono para las apps de escritorio: Configuración → Privacidad y seguridad → Micrófono. También se puede subir el volumen de entrada o bajar `PICO_MINIMO` en `config.py`. |
 | La primera ronda tarda mucho | Es la compilación de numba. Pasa una sola vez; las siguientes ejecuciones arrancan más rápido. |
-| `ModuleNotFoundError: voicer_choicer` | Falta activar el entorno (`.venv\Scripts\activate`) o correr `pip install -e .`. |
+| `ModuleNotFoundError` al importar `audio`, `config`, `juego`, etc. | Los comandos se corren desde la carpeta del proyecto, con el entorno activado (`.venv\Scripts\activate`). |
+| "tiene que ser mono y de 16 bits" | Un clip de `packs/` no es mono o no es de 16 bits. Convertirlo (por ejemplo con Audacity) o volver a grabarlo desde el menú. |
 | Los puntajes parecen muy altos o muy bajos | Ajustar `ESCALA_COSTO_TIMBRE` y `ERROR_TONO_MAXIMO` en `config.py`. En la sección 4.13 del informe está cómo se calibraron. |
 
 ## Dependencias
 
 | Paquete | Versión | Uso |
 |---|---|---|
-| librosa | 1.0.0 | MFCC, pyin, DTW, recorte de silencios. Instala además NumPy, SciPy, numba, soxr, joblib y otras. |
+| librosa | 1.0.0 | MFCC, pyin, DTW, recorte de silencios y carga de audio. Instala además NumPy, SciPy, numba, soundfile, soxr, joblib y otras. |
 | sounddevice | 0.5.5 | Grabar y reproducir. En Windows ya incluye PortAudio. |
-| soundfile | 0.14.0 | Leer y escribir `.wav`. Incluye libsndfile. |
 
-El resto (`json`, `pathlib`, `random`, `statistics`, `logging`, `unittest`) viene con Python.
+El resto (`wave`, `json`, `pathlib`, `random`, `statistics`, `logging`, `unittest`) viene con Python. Los `.wav` se leen y escriben con el módulo `wave`.

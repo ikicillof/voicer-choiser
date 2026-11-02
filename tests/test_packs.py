@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from voicer_choicer import packs
+import packs
 
 
 class TestPacks(unittest.TestCase):

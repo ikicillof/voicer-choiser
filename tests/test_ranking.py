@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from voicer_choicer import ranking
+import ranking
 
 
 class TestRanking(unittest.TestCase):

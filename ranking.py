@@ -16,7 +16,7 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-from voicer_choicer import config
+import config
 
 log = logging.getLogger(__name__)
 

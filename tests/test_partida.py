@@ -10,7 +10,9 @@ como una función propia al compilar y falla si encuentra un objeto Mock.
 import unittest
 from unittest import mock
 
-from voicer_choicer import config, juego, puntaje
+import config
+import juego
+import puntaje
 
 CARPETA_DEMO = config.CARPETA_PACKS / "demo"
 

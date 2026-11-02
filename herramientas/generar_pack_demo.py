@@ -1,19 +1,19 @@
 """Genera el pack 'demo' con sonidos sintéticos para probar el juego sin grabar nada.
 
 Uso (desde la raíz del proyecto, con el entorno activado):
-    python herramientas/generar_pack_demo.py
+    python -m herramientas.generar_pack_demo
 
 Son silbidos y notas: se imitan silbando o tarareando. Para clips de voz,
 usar la opción "Grabar un clip nuevo" del menú.
 """
 
-from pathlib import Path
-
 import librosa
-import soundfile as sf
 
-SR = 22050
-DESTINO = Path(__file__).resolve().parents[1] / "packs" / "demo"
+import audio
+import config
+
+SR = config.FRECUENCIA_MUESTREO
+DESTINO = config.CARPETA_PACKS / "demo"
 
 
 def chirp(desde, hasta, segundos):
@@ -48,7 +48,7 @@ def main():
     DESTINO.mkdir(parents=True, exist_ok=True)
     for nombre, generar in CLIPS.items():
         ruta = DESTINO / f"{nombre}.wav"
-        sf.write(ruta, con_fundido(generar()), SR)
+        audio.guardar(ruta, con_fundido(generar()), SR)
         print(f"Creado packs/demo/{ruta.name}")
 
 

@@ -5,7 +5,8 @@ import unittest
 
 import librosa
 
-from voicer_choicer import config, puntaje
+import config
+import puntaje
 
 SR = config.FRECUENCIA_MUESTREO
 

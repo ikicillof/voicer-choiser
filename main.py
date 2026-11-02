@@ -4,9 +4,15 @@ from __future__ import annotations
 
 import logging
 
-from voicer_choicer import audio, config, interfaz, juego, packs, puntaje, ranking
+import audio
+import config
+import interfaz
+import juego
+import packs
+import puntaje
+import ranking
 
-log = logging.getLogger("voicer_choicer")
+log = logging.getLogger("voicer")
 
 OPCIONES_MENU = ["Jugar", "Ver ranking", "Grabar un clip nuevo", "Salir"]
 

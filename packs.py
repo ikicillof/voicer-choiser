@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 from pathlib import Path
 
-from voicer_choicer import config
+import config
 
 EXTENSION = ".wav"
 

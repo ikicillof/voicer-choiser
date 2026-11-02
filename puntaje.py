@@ -24,7 +24,7 @@ from pathlib import Path
 
 import librosa
 
-from voicer_choicer import config
+import config
 
 log = logging.getLogger(__name__)
 
@@ -52,7 +52,7 @@ def cargar(ruta: Path) -> object:
     """Lee un .wav y lo remuestrea a la frecuencia del juego (mono)."""
     try:
         senal, _ = librosa.load(ruta, sr=config.FRECUENCIA_MUESTREO, mono=True)
-    except Exception as error:  # soundfile lanza varios tipos distintos
+    except Exception as error:  # librosa.load lanza varios tipos distintos
         raise RuntimeError(f"No se pudo leer el audio {ruta.name}: {error}") from error
     return senal
 
