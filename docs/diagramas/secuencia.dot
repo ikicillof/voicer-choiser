@@ -1,0 +1,64 @@
+digraph G { graph [fontname="DejaVu Sans", fontsize=14, bgcolor="white", pad=0.2, nodesep=1.25, ranksep=0.5, splines=line, forcelabels=true, label="Secuencia de un turno (juego.jugar_turno)", labelloc=t]; node [fontname="DejaVu Sans", fontsize=10, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#4A5D7A", penwidth=1.2]; edge [fontname="DejaVu Sans", fontsize=9, color="#4A5D7A"]; rankdir=TB;
+  h0 [label="jugar_turno
+(juego.py)", width=1.3];
+  h1 [label="interfaz", width=1.3];
+  h2 [label="audio", width=1.3];
+  h3 [label="puntaje", width=1.3];
+  h4 [label="librosa", width=1.3];
+  {rank=same; h0; h1; h2; h3; h4;}
+  h0 -> h1 -> h2 -> h3 -> h4 [style=invis];
+  node [shape=point, width=0.01, height=0.01, style=invis, label=""];
+  {rank=same; c0_1; c1_1; c2_1; c3_1; c4_1;}
+  c0_1 -> c1_1 -> c2_1 -> c3_1 -> c4_1 [style=invis];
+  {rank=same; c0_2; c1_2; c2_2; c3_2; c4_2;}
+  c0_2 -> c1_2 -> c2_2 -> c3_2 -> c4_2 [style=invis];
+  {rank=same; c0_3; c1_3; c2_3; c3_3; c4_3;}
+  c0_3 -> c1_3 -> c2_3 -> c3_3 -> c4_3 [style=invis];
+  {rank=same; c0_4; c1_4; c2_4; c3_4; c4_4;}
+  c0_4 -> c1_4 -> c2_4 -> c3_4 -> c4_4 [style=invis];
+  {rank=same; c0_5; c1_5; c2_5; c3_5; c4_5;}
+  c0_5 -> c1_5 -> c2_5 -> c3_5 -> c4_5 [style=invis];
+  {rank=same; c0_6; c1_6; c2_6; c3_6; c4_6;}
+  c0_6 -> c1_6 -> c2_6 -> c3_6 -> c4_6 [style=invis];
+  {rank=same; c0_7; c1_7; c2_7; c3_7; c4_7;}
+  c0_7 -> c1_7 -> c2_7 -> c3_7 -> c4_7 [style=invis];
+  {rank=same; c0_8; c1_8; c2_8; c3_8; c4_8;}
+  c0_8 -> c1_8 -> c2_8 -> c3_8 -> c4_8 [style=invis];
+  {rank=same; c0_9; c1_9; c2_9; c3_9; c4_9;}
+  c0_9 -> c1_9 -> c2_9 -> c3_9 -> c4_9 [style=invis];
+  {rank=same; c0_10; c1_10; c2_10; c3_10; c4_10;}
+  c0_10 -> c1_10 -> c2_10 -> c3_10 -> c4_10 [style=invis];
+  {rank=same; c0_11; c1_11; c2_11; c3_11; c4_11;}
+  c0_11 -> c1_11 -> c2_11 -> c3_11 -> c4_11 [style=invis];
+  {rank=same; c0_12; c1_12; c2_12; c3_12; c4_12;}
+  c0_12 -> c1_12 -> c2_12 -> c3_12 -> c4_12 [style=invis];
+  {rank=same; c0_13; c1_13; c2_13; c3_13; c4_13;}
+  c0_13 -> c1_13 -> c2_13 -> c3_13 -> c4_13 [style=invis];
+  {rank=same; c0_14; c1_14; c2_14; c3_14; c4_14;}
+  c0_14 -> c1_14 -> c2_14 -> c3_14 -> c4_14 [style=invis];
+  {rank=same; c0_15; c1_15; c2_15; c3_15; c4_15;}
+  c0_15 -> c1_15 -> c2_15 -> c3_15 -> c4_15 [style=invis];
+  {rank=same; c0_16; c1_16; c2_16; c3_16; c4_16;}
+  c0_16 -> c1_16 -> c2_16 -> c3_16 -> c4_16 [style=invis];
+  h0 -> c0_1 -> c0_2 -> c0_3 -> c0_4 -> c0_5 -> c0_6 -> c0_7 -> c0_8 -> c0_9 -> c0_10 -> c0_11 -> c0_12 -> c0_13 -> c0_14 -> c0_15 -> c0_16 [style=dashed, color="#999999", arrowhead=none, penwidth=1.1, weight=100];
+  h1 -> c1_1 -> c1_2 -> c1_3 -> c1_4 -> c1_5 -> c1_6 -> c1_7 -> c1_8 -> c1_9 -> c1_10 -> c1_11 -> c1_12 -> c1_13 -> c1_14 -> c1_15 -> c1_16 [style=dashed, color="#999999", arrowhead=none, penwidth=1.1, weight=100];
+  h2 -> c2_1 -> c2_2 -> c2_3 -> c2_4 -> c2_5 -> c2_6 -> c2_7 -> c2_8 -> c2_9 -> c2_10 -> c2_11 -> c2_12 -> c2_13 -> c2_14 -> c2_15 -> c2_16 [style=dashed, color="#999999", arrowhead=none, penwidth=1.1, weight=100];
+  h3 -> c3_1 -> c3_2 -> c3_3 -> c3_4 -> c3_5 -> c3_6 -> c3_7 -> c3_8 -> c3_9 -> c3_10 -> c3_11 -> c3_12 -> c3_13 -> c3_14 -> c3_15 -> c3_16 [style=dashed, color="#999999", arrowhead=none, penwidth=1.1, weight=100];
+  h4 -> c4_1 -> c4_2 -> c4_3 -> c4_4 -> c4_5 -> c4_6 -> c4_7 -> c4_8 -> c4_9 -> c4_10 -> c4_11 -> c4_12 -> c4_13 -> c4_14 -> c4_15 -> c4_16 [style=dashed, color="#999999", arrowhead=none, penwidth=1.1, weight=100];
+  // mensajes (flechas llenas = llamada, punteadas = respuesta)
+  c0_1 -> c2_1 [xlabel="reproducir(clip)", weight=0];
+  c0_2 -> c1_2 [xlabel="pausa() / cuenta_regresiva(3)", weight=0];
+  c0_3 -> c2_3 [xlabel="grabar(segundos)", weight=0];
+  c0_4 -> c2_4 [xlabel="señal ndarray (M,)", weight=0, dir=back, style=dashed];
+  c0_5 -> c3_5 [xlabel="analizar(señal)", weight=0];
+  c3_6 -> c4_6 [xlabel="effects.trim · util.normalize", weight=0];
+  c3_7 -> c4_7 [xlabel="feature.mfcc", weight=0];
+  c3_8 -> c4_8 [xlabel="pyin", weight=0];
+  c0_9 -> c3_9 [xlabel="dict de análisis (None si está vacía)", weight=0, dir=back, style=dashed];
+  c0_10 -> c3_10 [xlabel="comparar(original, imitación)", weight=0];
+  c3_11 -> c4_11 [xlabel="sequence.dtw", weight=0];
+  c3_12 -> c4_12 [xlabel="D, wp", weight=0, dir=back, style=dashed];
+  c0_13 -> c3_13 [xlabel="dict de resultado", weight=0, dir=back, style=dashed];
+  c0_14 -> c1_14 [xlabel="mostrar_resultado(...)", weight=0];
+  c0_15 -> c2_15 [xlabel="guardar(ruta, señal)", weight=0];
+}

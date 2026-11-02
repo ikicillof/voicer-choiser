@@ -9,10 +9,10 @@ micrófono, solo se toca este archivo.
 from __future__ import annotations
 
 import logging
+import sys
 import wave
+from array import array
 from pathlib import Path
-
-import numpy as np
 
 import config
 
@@ -77,8 +77,12 @@ def reproducir(ruta: Path) -> None:
     with _abrir_wav(ruta) as archivo:
         sr = archivo.getframerate()
         crudo = archivo.readframes(archivo.getnframes())
+    muestras = array("h")
+    muestras.frombytes(crudo)
+    if sys.byteorder == "big":  # los .wav guardan las muestras en little-endian
+        muestras.byteswap()
     # De int16 a float32 entre -1 y 1, como entrega sounddevice al grabar.
-    datos = np.frombuffer(crudo, dtype="<i2").astype(np.float32) / ESCALA_INT16
+    datos = array("f", (m / ESCALA_INT16 for m in muestras))
     try:
         sd.play(datos, sr)
         sd.wait()
@@ -111,8 +115,12 @@ def guardar(ruta: Path, senal, sr: int = config.FRECUENCIA_MUESTREO) -> None:
     convertirlos a enteros. Crea la carpeta si hace falta.
     """
     ruta.parent.mkdir(parents=True, exist_ok=True)
-    recortada = np.clip(np.asarray(senal, dtype=np.float64), -1.0, 1.0)
-    enteros = np.rint(recortada * (ESCALA_INT16 - 1)).astype(np.int16)
+    enteros = array(
+        "h",
+        (round(max(-1.0, min(1.0, float(m))) * (ESCALA_INT16 - 1)) for m in senal),
+    )
+    if sys.byteorder == "big":  # los .wav guardan las muestras en little-endian
+        enteros.byteswap()
     try:
         with wave.open(str(ruta), "wb") as archivo:
             archivo.setnchannels(1)
