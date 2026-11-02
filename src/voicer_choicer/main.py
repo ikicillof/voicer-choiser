@@ -4,13 +4,15 @@ from __future__ import annotations
 
 import logging
 
-from voicer_choicer import audio, config, interfaz, packs, puntaje, ranking
-from voicer_choicer.errores import ErrorJuego, GrabacionVaciaError
-from voicer_choicer.juego import Partida
+from voicer_choicer import audio, config, interfaz, juego, packs, puntaje, ranking
 
 log = logging.getLogger("voicer_choicer")
 
 OPCIONES_MENU = ["Jugar", "Ver ranking", "Grabar un clip nuevo", "Salir"]
+
+# Errores esperables del juego (micrófono, archivos, packs). Se listan juntos
+# para que el menú los atrape sin tapar otros errores de programación.
+ERRORES_ESPERABLES = (RuntimeError, ValueError, FileNotFoundError)
 
 
 def configurar_logging() -> None:
@@ -31,7 +33,7 @@ def main() -> None:
 
     try:
         microfono = audio.verificar_microfono()
-    except ErrorJuego as error:
+    except RuntimeError as error:
         interfaz.error(str(error))
         interfaz.mensaje("Conectá un micrófono y volvé a abrir el juego.")
         return
@@ -53,8 +55,8 @@ def main() -> None:
             else:
                 interfaz.mensaje("¡Hasta la próxima!")
                 break
-        except ErrorJuego as error:
-            # Errores esperables (micrófono, archivos): se avisa y se vuelve al menú.
+        except ERRORES_ESPERABLES as error:
+            # Manejador de último nivel: se avisa y se vuelve al menú.
             log.warning("Error del juego: %s", error)
             interfaz.error(str(error))
         except KeyboardInterrupt:
@@ -82,8 +84,8 @@ def menu_jugar() -> None:
         )
         jugadores.append(nombre)
 
-    partida = Partida(jugadores, nombre_pack, config.RONDAS_POR_PARTIDA)
-    totales = partida.jugar()
+    partida = juego.nueva_partida(jugadores, nombre_pack, config.RONDAS_POR_PARTIDA)
+    totales = juego.jugar_partida(partida)
 
     interfaz.limpiar()
     interfaz.titulo("Resultado final")
@@ -132,10 +134,8 @@ def menu_grabar_clip() -> None:
     interfaz.pausa("Enter para empezar...")
     interfaz.cuenta_regresiva(config.SEGUNDOS_CUENTA_REGRESIVA)
     senal = audio.grabar(config.SEGUNDOS_CLIP_NUEVO)
-    try:
-        puntaje.analizar(senal)  # valida que no haya quedado en silencio
-    except GrabacionVaciaError as error:
-        interfaz.error(f"{error} El clip no se guardó.")
+    if puntaje.analizar(senal) is None:  # valida que no haya quedado en silencio
+        interfaz.error(f"{puntaje.MENSAJE_GRABACION_VACIA} El clip no se guardó.")
         return
     audio.guardar(destino, senal)
     interfaz.mensaje(f"Clip guardado en packs/{destino.parent.name}/{destino.name}")

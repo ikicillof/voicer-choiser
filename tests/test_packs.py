@@ -6,7 +6,6 @@ import unittest
 from pathlib import Path
 
 from voicer_choicer import packs
-from voicer_choicer.errores import PackInvalidoError
 
 
 class TestPacks(unittest.TestCase):
@@ -29,9 +28,9 @@ class TestPacks(unittest.TestCase):
         self.assertEqual(nombres, ["gato.wav", "perro.wav", "vaca.wav"])
 
     def test_pack_vacio_o_inexistente(self):
-        with self.assertRaises(PackInvalidoError):
+        with self.assertRaises(ValueError):
             packs.listar_clips("vacio", self.raiz)
-        with self.assertRaises(PackInvalidoError):
+        with self.assertRaises(FileNotFoundError):
             packs.listar_clips("no_existe", self.raiz)
 
     def test_elegir_sin_repetir(self):

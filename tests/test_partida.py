@@ -41,12 +41,13 @@ class TestPartida(unittest.TestCase):
             mock.patch.object(juego.config, "GUARDAR_GRABACIONES", False),
             mock.patch.object(juego.ranking, "registrar_partida") as registrar,
         ):
-            partida = juego.Partida(["Ana", "Beto"], "demo", rondas=2)
-            totales = partida.jugar()
+            partida = juego.nueva_partida(["Ana", "Beto"], "demo", rondas=2)
+            totales = juego.jugar_partida(partida)
 
         self.assertEqual(totales, {"Ana": 200, "Beto": 200})
         registrar.assert_called_once()
-        self.assertEqual(len(partida._analisis_originales), 2)  # la caché funcionó
+        self.assertEqual(partida["ronda_actual"], 2)
+        self.assertEqual(len(partida["analisis_originales"]), 2)  # la caché funcionó
 
 
 if __name__ == "__main__":

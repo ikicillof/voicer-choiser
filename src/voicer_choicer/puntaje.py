@@ -20,40 +20,27 @@ from __future__ import annotations
 import logging
 import math
 import statistics
-from dataclasses import dataclass
 from pathlib import Path
 
 import librosa
 
 from voicer_choicer import config
-from voicer_choicer.errores import ErrorAudio, GrabacionVaciaError
 
 log = logging.getLogger(__name__)
 
+MENSAJE_GRABACION_VACIA = "No se escuchó nada. Acercate al micrófono y probá de nuevo."
 
-@dataclass
-class Analisis:
-    """Descripción de un audio lista para comparar.
-
-    mfcc: matriz de librosa de forma (13, cuadros). Es lo único que queda
-          como arreglo, porque se le pasa directo a librosa.sequence.dtw.
-    tono: lista de semitonos (escala MIDI) por cuadro; None en los cuadros
-          sin tono (silencio, consonantes, ruido).
-    duracion: segundos de audio útil, después de recortar silencios.
-    """
-
-    mfcc: object
-    tono: list[float | None]
-    duracion: float
-
-
-@dataclass
-class Resultado:
-    """Puntaje de una imitación, de 0 a 100 en cada componente."""
-
-    timbre: float
-    tono: float | None  # None si ninguno de los dos audios tiene tono
-    total: int
+# Un análisis es un diccionario con las claves:
+#   "mfcc": matriz de librosa de forma (13, cuadros). Es lo único que queda
+#           como arreglo, porque se le pasa directo a librosa.sequence.dtw.
+#   "tono": lista de semitonos (escala MIDI) por cuadro; None en los cuadros
+#           sin tono (silencio, consonantes, ruido).
+#   "duracion": segundos de audio útil, después de recortar silencios.
+#
+# Un resultado es un diccionario con las claves:
+#   "timbre": float de 0 a 100
+#   "tono": float de 0 a 100, o None si ninguno de los dos audios tiene tono
+#   "total": int de 0 a 100
 
 
 # --------------------------------------------------------------------------
@@ -66,29 +53,28 @@ def cargar(ruta: Path) -> object:
     try:
         senal, _ = librosa.load(ruta, sr=config.FRECUENCIA_MUESTREO, mono=True)
     except Exception as error:  # soundfile lanza varios tipos distintos
-        raise ErrorAudio(f"No se pudo leer el audio {ruta.name}: {error}") from error
+        raise RuntimeError(f"No se pudo leer el audio {ruta.name}: {error}") from error
     return senal
 
 
-def analizar(senal, sr: int = config.FRECUENCIA_MUESTREO) -> Analisis:
-    """Recorta, normaliza y extrae timbre y tono de una señal."""
+def analizar(senal, sr: int = config.FRECUENCIA_MUESTREO) -> dict | None:
+    """Recorta, normaliza y extrae timbre y tono de una señal.
+
+    Devuelve None si la grabación quedó en silencio o es demasiado corta.
+    """
     # 0. librosa.effects.trim mide el silencio en forma RELATIVA al pico de la
     #    propia señal, así que una grabación que es solo ruido de fondo no se
     #    detecta como vacía. Por eso primero se mira el volumen absoluto.
     pico = float(abs(senal).max()) if len(senal) else 0.0
     if pico < config.PICO_MINIMO:
-        raise GrabacionVaciaError(
-            "No se escuchó nada. Acercate al micrófono y probá de nuevo."
-        )
+        return None
 
     # 1. Recortar silencios al principio y al final. Sin esto, el medio
     #    segundo que tarda el jugador en arrancar empeora el puntaje.
     recortada, _ = librosa.effects.trim(senal, top_db=config.UMBRAL_SILENCIO_DB)
     duracion = len(recortada) / sr
     if duracion < config.DURACION_MINIMA_SEG:
-        raise GrabacionVaciaError(
-            "No se escuchó nada. Acercate al micrófono y probá de nuevo."
-        )
+        return None
 
     # 2. Normalizar para que gritar o susurrar no cambie el resultado.
     recortada = librosa.util.normalize(recortada)
@@ -118,12 +104,15 @@ def analizar(senal, sr: int = config.FRECUENCIA_MUESTREO) -> Analisis:
     )
     tono = _a_semitonos(f0.tolist())
 
-    return Analisis(mfcc=mfcc, tono=tono, duracion=duracion)
+    return {"mfcc": mfcc, "tono": tono, "duracion": duracion}
 
 
-def analizar_archivo(ruta: Path) -> Analisis:
-    """Atajo: cargar + analizar."""
-    return analizar(cargar(ruta))
+def analizar_archivo(ruta: Path) -> dict:
+    """Atajo: cargar + analizar. Lanza ValueError si el archivo está en silencio."""
+    analisis = analizar(cargar(ruta))
+    if analisis is None:
+        raise ValueError(f"El archivo {ruta.name} no tiene audio útil (silencio).")
+    return analisis
 
 
 def _a_semitonos(frecuencias: list[float]) -> list[float | None]:
@@ -144,11 +133,11 @@ def _a_semitonos(frecuencias: list[float]) -> list[float | None]:
 # --------------------------------------------------------------------------
 
 
-def comparar(original: Analisis, imitacion: Analisis) -> Resultado:
+def comparar(original: dict, imitacion: dict) -> dict:
     """Compara dos análisis y devuelve el puntaje."""
     camino, costo_medio = _alinear(original, imitacion)
     puntos_timbre = _puntaje_timbre(costo_medio)
-    puntos_tono = _puntaje_tono(original.tono, imitacion.tono, camino)
+    puntos_tono = _puntaje_tono(original["tono"], imitacion["tono"], camino)
 
     if puntos_tono is None:
         # Clips sin tono (por ejemplo, un ruido de puerta): solo cuenta el timbre.
@@ -163,12 +152,10 @@ def comparar(original: Analisis, imitacion: Analisis) -> Resultado:
         puntos_tono,
         len(camino),
     )
-    return Resultado(timbre=puntos_timbre, tono=puntos_tono, total=round(total))
+    return {"timbre": puntos_timbre, "tono": puntos_tono, "total": round(total)}
 
 
-def _alinear(
-    original: Analisis, imitacion: Analisis
-) -> tuple[list[tuple[int, int]], float]:
+def _alinear(original: dict, imitacion: dict) -> tuple[list[tuple[int, int]], float]:
     """Alinea los MFCC con DTW y devuelve (camino, costo medio por paso).
 
     librosa.sequence.dtw devuelve:
@@ -178,7 +165,7 @@ def _alinear(
     no tenga más costo que uno corto solo por tener más cuadros.
     """
     costo_acumulado, camino = librosa.sequence.dtw(
-        X=original.mfcc, Y=imitacion.mfcc, metric="euclidean"
+        X=original["mfcc"], Y=imitacion["mfcc"], metric="euclidean"
     )
     pares = [(int(i), int(j)) for i, j in camino.tolist()]
     costo_medio = float(costo_acumulado[-1, -1]) / len(pares)

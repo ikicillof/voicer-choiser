@@ -12,7 +12,6 @@ import logging
 from pathlib import Path
 
 from voicer_choicer import config
-from voicer_choicer.errores import ErrorAudio
 
 log = logging.getLogger(__name__)
 
@@ -30,16 +29,16 @@ else:
 
 def _requerir_dispositivos() -> None:
     if sd is None:
-        raise ErrorAudio(f"No se pudo inicializar el audio: {_ERROR_IMPORTACION}")
+        raise RuntimeError(f"No se pudo inicializar el audio: {_ERROR_IMPORTACION}")
 
 
 def verificar_microfono() -> str:
-    """Devuelve el nombre del micrófono por defecto o lanza ErrorAudio."""
+    """Devuelve el nombre del micrófono por defecto o lanza RuntimeError."""
     _requerir_dispositivos()
     try:
         dispositivo = sd.query_devices(kind="input")
     except (sd.PortAudioError, ValueError) as error:
-        raise ErrorAudio("No se encontró ningún micrófono conectado.") from error
+        raise RuntimeError("No se encontró ningún micrófono conectado.") from error
     return str(dispositivo["name"])
 
 
@@ -49,7 +48,7 @@ def duracion(ruta: Path) -> float:
     try:
         return float(sf.info(str(ruta)).duration)
     except RuntimeError as error:
-        raise ErrorAudio(
+        raise RuntimeError(
             f"El archivo {ruta.name} está dañado o no es audio."
         ) from error
 
@@ -59,12 +58,13 @@ def reproducir(ruta: Path) -> None:
     _requerir_dispositivos()
     try:
         datos, sr = sf.read(str(ruta), dtype="float32")
+    except RuntimeError as error:  # soundfile: archivo ilegible
+        raise RuntimeError(f"No se pudo leer {ruta.name}.") from error
+    try:
         sd.play(datos, sr)
         sd.wait()
-    except RuntimeError as error:  # soundfile: archivo ilegible
-        raise ErrorAudio(f"No se pudo leer {ruta.name}.") from error
     except sd.PortAudioError as error:
-        raise ErrorAudio("No se pudo usar la salida de audio.") from error
+        raise RuntimeError("No se pudo usar la salida de audio.") from error
 
 
 def grabar(segundos: float, sr: int = config.FRECUENCIA_MUESTREO):
@@ -80,7 +80,7 @@ def grabar(segundos: float, sr: int = config.FRECUENCIA_MUESTREO):
         )
         sd.wait()
     except sd.PortAudioError as error:
-        raise ErrorAudio("No se pudo grabar desde el micrófono.") from error
+        raise RuntimeError("No se pudo grabar desde el micrófono.") from error
     log.debug("Grabados %.1f s a %d Hz", segundos, sr)
     return grabacion[:, 0]  # de forma (muestras, 1) a (muestras,)
 
@@ -92,4 +92,4 @@ def guardar(ruta: Path, senal, sr: int = config.FRECUENCIA_MUESTREO) -> None:
     try:
         sf.write(str(ruta), senal, sr)
     except (RuntimeError, OSError) as error:
-        raise ErrorAudio(f"No se pudo guardar {ruta.name}: {error}") from error
+        raise RuntimeError(f"No se pudo guardar {ruta.name}: {error}") from error

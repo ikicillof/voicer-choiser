@@ -6,7 +6,6 @@ import random
 from pathlib import Path
 
 from voicer_choicer import config
-from voicer_choicer.errores import PackInvalidoError
 
 EXTENSION = ".wav"
 
@@ -26,12 +25,10 @@ def listar_clips(nombre_pack: str, carpeta: Path = config.CARPETA_PACKS) -> list
     """Rutas de los clips de un pack, en orden alfabético."""
     ruta = carpeta / nombre_pack
     if not ruta.is_dir():
-        raise PackInvalidoError(f"No existe el pack '{nombre_pack}'.")
+        raise FileNotFoundError(f"No existe el pack '{nombre_pack}'.")
     clips = sorted(ruta.glob(f"*{EXTENSION}"))
     if not clips:
-        raise PackInvalidoError(
-            f"El pack '{nombre_pack}' no tiene archivos {EXTENSION}."
-        )
+        raise ValueError(f"El pack '{nombre_pack}' no tiene archivos {EXTENSION}.")
     return clips
 
 
